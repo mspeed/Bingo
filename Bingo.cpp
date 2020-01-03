@@ -2,41 +2,45 @@
 
 #include "BingoCage.h"
 #include "BingoCard.h"
+#include "ResultLogger.h"
 
-
-int main()
+int main(int argc, char * argv[])
 {
 
-  const int NumBalls = 49;
-  
-  BingoCage gBingoCage(NumBalls);
-  //  gBingoCage.Print();
-
-  BingoCard gBingoCard(5, NumBalls);
-  //  gBingoCard.Print();
-  
-  bool Bingo = false;
-  // Begin.
-
-  //  std::cout << "Drawing numbers: " << std::endl;
-
-  int DrawnBall = gBingoCage.Draw();
-  while(DrawnBall && (!Bingo))
+  if(argc != 5)
   {
-    //    std::cout << DrawnBall << "-";
-    if(!gBingoCard.Check(DrawnBall))
-    {
-      Bingo = true;
-      std::cout << "Bingo!" << std::endl;
-      std::cout << "Took: " << gBingoCage.NumDraws << " draws." << std::endl;
-    }
-    DrawnBall = gBingoCage.Draw();
+    std::cout << "Usage: " << argv[0];
+    std::cout << " <Num Balls> <Numbers on Cards> <Num Tests> <Results Filename>";
+    std::cout << std::endl;
+    return -1;
   }
-  std::cout << std::endl;
+  
+  const int NumBalls = atoi(argv[1]);
+  const int NumbersOnCards = atoi(argv[2]);
+  const int NumTests = atoi(argv[3]);
+  const std::string ResultsFilename(argv[4]);
+  
+  BingoCage Cage(NumBalls);
+  BingoCard Card(NumbersOnCards, NumBalls);
+  ResultLogger Logger(ResultsFilename);
 
+  int DrawnBall;
+  
+  for(int i = 0; i < NumTests; i++)
+  {  
 
-  //  gBingoCage.Restart();
-  //  gBingoCage.Print();
+    DrawnBall = Cage.Draw();
+    while(Card.Check(DrawnBall))
+    {
+      DrawnBall = Cage.Draw();
+    }
+        
+    Logger.LogValue(Cage.NumDraws);    
+    Cage.Restart();
+    Card.Restart();
+  }  
+  
+  Logger.Close();
 
   return 0;  
 }

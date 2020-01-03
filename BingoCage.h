@@ -6,7 +6,6 @@
 
 class BingoCage
 {
-
  public:
   BingoCage(int NumBalls);
 
@@ -21,8 +20,6 @@ class BingoCage
   int Draw();
 
   void Print();
-
-  int GetNumDraws();
 
   int NumDraws;
   
